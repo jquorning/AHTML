@@ -1,0 +1,45 @@
+with "config/ahtml_config.gpr";
+
+project AHTML
+is
+
+   for Library_Name use "ahtml";
+   for Library_Version
+   use Project'Library_Name & ".so." & AHTML_Config.Crate_Version;
+
+   for Source_Dirs
+   use ("source/", "config/");
+
+   for Object_Dir
+   use ".object/" & AHTML_Config.Build_Profile;
+
+   for Library_Dir
+   use "library";
+
+   type Library_Type_Type is ("relocatable", "static", "static-pic");
+
+   Library_Type : Library_Type_Type :=
+     external ("AHTML_LIBRARY_TYPE", external ("LIBRARY_TYPE", "static"));
+   for Library_Kind use Library_Type;
+
+   package Compiler
+   is
+      for Default_Switches ("Ada")
+      use AHTML_Config.Ada_Compiler_Switches;
+
+   end Compiler;
+
+   package Binder
+   is
+      for Switches ("Ada")
+      use ("-Es"); --  Symbolic traceback
+
+   end Binder;
+
+   package Install
+   is
+      for Artifacts (".") use ("share");
+
+   end Install;
+
+end AHTML;
